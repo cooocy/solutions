@@ -34,14 +34,34 @@
 
 # Definition for singly-linked list.
 
-class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
+from kits.list_kits import ListNode, load_list, compare_list
 
 
 class Solution:
+    """
+    可使用快慢指针和滑动窗口.
+    """
+
     def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        """
+        快慢指针.
+        1. 先设置一个 dummy 节点.
+        2. slow, fast 同时从 dump 开始.
+        3. 先让 fast 移动 n 次, 之前 slow 和 fast 一起移动, fast = None, 停止.
+        4. slow.next = slow.next.next
+        """
+        dummy = ListNode(0, head)
+        slow, fast, i = dummy, dummy, 0
+        while fast is not None:
+            if i > n:
+                slow = slow.next
+            else:
+                i += 1
+            fast = fast.next
+        slow.next = slow.next.next
+        return dummy.next
+
+    def removeNthFromEnd_2(self, head: ListNode, n: int) -> ListNode:
         """
         维护一个 宽度为 n + 1 的滑动视窗, 用来保存最后的 n + 1 个 node.
         原始链表: A -> B -> C -> D -> E -> F -> G
@@ -93,9 +113,22 @@ class Solution:
 
 
 if __name__ == '__main__':
-    head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5, ListNode(6, ListNode(7, None)))))))
-    # head = ListNode(1, ListNode(2))
-    # head = ListNode(1)
-    head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
-    result = Solution().removeNthFromEnd(head, 2)
-    print(result)
+    case = (
+        (load_list([1, 2]), 2, load_list([2])),
+        (load_list([1]), 1, load_list([])),
+        (load_list([1, 2]), 1, load_list([1])),
+        (load_list([1, 2, 3, 4, 5]), 2, load_list([1, 2, 3, 5])),
+    )
+    solution = Solution()
+    for c in case:
+        assert compare_list(solution.removeNthFromEnd(c[0], c[1]), c[2])
+
+    case = (
+        (load_list([1, 2]), 2, load_list([2])),
+        (load_list([1]), 1, load_list([])),
+        (load_list([1, 2]), 1, load_list([1])),
+        (load_list([1, 2, 3, 4, 5]), 2, load_list([1, 2, 3, 5])),
+    )
+    solution = Solution()
+    for c in case:
+        assert compare_list(solution.removeNthFromEnd_2(c[0], c[1]), c[2])
