@@ -31,4 +31,3 @@ def compare_list(a: ListNode, b: ListNode):
             return False
         cursor_a = cursor_a.next
         cursor_b = cursor_b.next
-    return True
